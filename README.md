@@ -6,6 +6,23 @@ Um projeto focado em segurança, pensado para o **advogado autônomo**: quem cui
 
 É um único arquivo HTML. Abre com dois cliques no navegador, funciona offline e conversa apenas com uma IA que roda na sua máquina, pelo [LM Studio](https://lmstudio.ai).
 
+## Requisitos
+
+**A ferramenta funciona em qualquer computador. A IA local é opcional e é ela que pede mais máquina.**
+
+| Para usar | Computador mínimo |
+|---|---|
+| **Só as regras** (sem IA) | Qualquer computador com Chrome ou Edge (Windows, Mac ou Linux). Nada para instalar |
+| **IA local, mais lenta** | 16 GB de RAM, sem placa de vídeo. Funciona, mas um documento de várias páginas pode levar minutos; modelos menores (3 a 4 bilhões de parâmetros) ajudam |
+| **IA local, rápida (recomendado)** | Placa de vídeo NVIDIA com 6 a 8 GB (ex.: RTX 3050, 3060, 4050, 4060) e 16 a 32 GB de RAM. Poucos segundos por página |
+| **Mac** | Apple Silicon (M1 a M4) com 16 GB de memória ou mais |
+
+- **Espaço em disco para a IA:** cerca de 1 GB para o LM Studio e de 2 a 5 GB para o modelo.
+- **Não funciona em celular:** use um computador.
+- **Para conferir a sua máquina no Windows:** em *Configurações > Sistema > Sobre* aparece a memória RAM; no *Gerenciador de Tarefas > Desempenho > GPU* aparecem a placa de vídeo e a memória dela.
+
+Detalhes, medições reais e sugestões de modelos: [docs/HARDWARE_E_MODELOS.md](docs/HARDWARE_E_MODELOS.md).
+
 ---
 
 ## Por que este projeto existe
