@@ -2,6 +2,8 @@
 
 O Anonimizador usa um modelo de linguagem rodando **no seu computador**, servido pelo [LM Studio](https://lmstudio.ai), um programa gratuito para Windows, macOS e Linux. Nada é enviado para fora: a página conversa com o LM Studio pelo endereço `http://127.0.0.1:1234`, que é a própria máquina.
 
+> **No Windows, existe um atalho:** depois de instalar e abrir o LM Studio uma vez, dê dois cliques no [Configurar_IA_Local.bat](https://github.com/jardimadv-maker/anonimizador-local-ia/releases/latest/download/Configurar_IA_Local.bat). Ele faz automaticamente os passos 2 a 6 deste guia (motor da placa de vídeo, modelo, servidor seguro e teste). Este guia continua útil para Mac, Linux e para conferir ou ajustar à mão.
+
 Este guia foi escrito e testado com o **LM Studio 0.4.18 no Windows 11**. Em outras versões os nomes de menus podem mudar um pouco; os comandos `lms` (linha de comando que acompanha o LM Studio) costumam ser os mesmos.
 
 ## 1. Instalar

@@ -65,9 +65,25 @@ Tudo o que está à esquerda da linha pontilhada acontece **no seu computador**.
 
 ## Início rápido
 
-1. **Baixe** o arquivo [`Anonimizador_IA.html`](Anonimizador_IA.html) e abra com dois cliques, no Chrome ou no Edge.
-2. **(Opcional, recomendado)** Instale o LM Studio, baixe um modelo e ligue o servidor local: veja [docs/LM_STUDIO.md](docs/LM_STUDIO.md). Sem a IA, o Anonimizador funciona só com as regras.
-3. **Escolha os arquivos**, clique em **Processar**, revise a prévia e baixe o resultado **e a chave**.
+### 1. A ferramenta
+
+1. **Baixe** o Anonimizador: [Anonimizador_IA.html](https://github.com/jardimadv-maker/anonimizador-local-ia/releases/latest/download/Anonimizador_IA.html).
+2. **Abra** o arquivo baixado com dois cliques (Chrome ou Edge).
+
+Já funciona, só com as regras.
+
+### 2. A IA local (Windows)
+
+1. **Instale o LM Studio** (gratuito) em [lmstudio.ai](https://lmstudio.ai), abra uma vez e espere a tela inicial carregar.
+2. **Baixe o configurador**: [Configurar_IA_Local.bat](https://github.com/jardimadv-maker/anonimizador-local-ia/releases/latest/download/Configurar_IA_Local.bat).
+3. **Dê dois cliques nele.** Ele confere o computador, usa a placa de vídeo se houver, oferece baixar um modelo adequado (responda **S**), liga o servidor local com configuração segura e faz um teste.
+4. **Abra o Anonimizador:** o selo no topo deve mostrar **"IA local: conectada"**.
+
+Nas próximas vezes, basta abrir o LM Studio antes de usar o Anonimizador.
+
+**Avisos do Windows ao baixar e abrir o configurador:** o navegador pode dizer que o arquivo "pode ser perigoso" (clique em **Manter**), e o Windows pode mostrar "O Windows protegeu o computador" (clique em **Mais informações** e depois em **Executar assim mesmo**). Isso acontece com qualquer arquivo .bat baixado da internet. O configurador é um texto simples, que você pode abrir no Bloco de Notas e ler antes de rodar.
+
+**Mac e Linux:** siga o passo a passo manual em [docs/LM_STUDIO.md](docs/LM_STUDIO.md).
 
 Qual computador e qual modelo usar: [docs/HARDWARE_E_MODELOS.md](docs/HARDWARE_E_MODELOS.md).
 
