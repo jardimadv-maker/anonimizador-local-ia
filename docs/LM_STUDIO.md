@@ -104,3 +104,4 @@ Se o seu LM Studio tiver essa opção na tela de configurações do servidor, po
 | IA muito lenta | Motor de processador numa máquina com placa | Selecione o motor da placa (item 2) |
 | Primeira resposta demora uns 30 s | Modelo sendo carregado | Normal: só acontece depois de um tempo sem uso |
 | Erro de memória ao carregar | Modelo grande demais para a placa | Use um modelo menor ou com contexto menor (veja [HARDWARE_E_MODELOS.md](HARDWARE_E_MODELOS.md)) |
+| Download do modelo falha com "429" ou "Too Many Requests" | O Hugging Face limita muitos downloads seguidos da mesma rede (comum quando várias pessoas baixam juntas na mesma rede) | Espere de 10 a 30 minutos e rode o configurador de novo, ou baixe de outra rede |

@@ -109,7 +109,7 @@ Qual computador e qual modelo usar: [docs/HARDWARE_E_MODELOS.md](docs/HARDWARE_E
 
 - **Nenhum documento sai do computador.** A leitura, a conversão, a anonimização e a reidentificação rodam no navegador.
 - **Funciona offline.** Os leitores de PDF ([pdf.js](https://github.com/mozilla/pdf.js) 3.11.174) e Word ([mammoth](https://github.com/mwilliamson/mammoth.js) 1.8.0) estão embutidos no arquivo, e o Anonimizador confere a impressão digital SHA-512 de cada um antes de executar. Se o arquivo for adulterado, o leitor não roda.
-- **A IA é local.** O LM Studio deve escutar só em `127.0.0.1`, e a IA só pode **acrescentar** nomes que aparecem de fato no texto.
+- **A IA é local.** O LM Studio deve escutar só em `127.0.0.1`, e o Anonimizador recusa qualquer endereço de IA fora do próprio computador. A IA só pode **acrescentar** nomes que aparecem de fato no texto.
 - **A chave é sua.** Ela contém os dados verdadeiros, fica só na memória da página e no `.json` que você baixar. Nada é guardado no navegador além da configuração da IA (endereço e modelo).
 - **Desligue o registro de conteúdo do LM Studio** (veja [docs/LM_STUDIO.md](docs/LM_STUDIO.md)). Por padrão ele pode gravar as mensagens em arquivos de log, sem criptografia.
 

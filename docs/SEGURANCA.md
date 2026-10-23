@@ -6,7 +6,7 @@ O Anonimizador foi desenhado para o advogado que trabalha sozinho e precisa prot
 
 1. **Os documentos não saem do computador.** Leitura, conversão, anonimização e reidentificação rodam no navegador.
 2. **Sem internet.** O arquivo funciona offline; as bibliotecas de leitura estão embutidas.
-3. **IA só local.** A única comunicação de rede é com o LM Studio em `127.0.0.1` (a própria máquina).
+3. **IA só local.** A única comunicação de rede é com o LM Studio em `127.0.0.1` (a própria máquina). O Anonimizador **recusa** qualquer endereço de IA que não seja do próprio computador (`127.0.0.1` ou `localhost`), mesmo que alguém o digite na aba Configurações.
 4. **O usuário guarda a chave.** O vínculo entre rótulos e dados reais nunca vai junto com o texto anonimizado.
 5. **Revisão humana obrigatória.** A ferramenta reduz o risco, mas não o elimina.
 

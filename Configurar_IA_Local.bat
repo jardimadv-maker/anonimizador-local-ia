@@ -1,7 +1,8 @@
 <# : inicio em lote (cmd) - o restante do arquivo e PowerShell
 @echo off
 title Configurar IA local para o Anonimizador
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$env:CONFIG_IA_ARQ='%~f0'; Invoke-Expression ([System.IO.File]::ReadAllText('%~f0'))"
+set "CONFIG_IA_ARQ=%~f0"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-Expression ([System.IO.File]::ReadAllText($env:CONFIG_IA_ARQ))"
 echo.
 pause
 exit /b
@@ -80,24 +81,31 @@ if ($survey -match 'NVIDIA|Apple|Radeon|AMD|Arc') {
 # ---------- 4. Modelo ----------
 Titulo '4. Modelo de IA'
 $lista = (& $lms ls 2>&1 | Out-String)
-$temLLM = $false
-$secao = ''
-foreach ($linha in ($lista -split "`r?`n")) {
-  if ($linha -match '^\s*LLM\s') { $secao = 'llm'; continue }
-  if ($linha -match '^\s*EMBEDDING\s') { $secao = 'emb'; continue }
-  if ($secao -eq 'llm' -and $linha.Trim()) { $temLLM = $true }
-}
-if ($temLLM) {
-  Ok 'Ja existe um modelo de linguagem baixado. Nada para baixar.'
+# Modelos testados com o Anonimizador. Outro modelo qualquer (por exemplo, o que o LM Studio sugere
+# na primeira abertura) pode ser grande demais para o computador, entao oferecemos o testado mesmo assim.
+$temRecomendado = $lista -match '(?i)llama-3-8b-instruct|llama-3\.2-3b-instruct'
+if ($temRecomendado) {
+  Ok 'O modelo recomendado para o Anonimizador ja esta baixado. Nada para baixar.'
 } else {
   $grande = ($vramGB -ge 6) -or ($ramGB -ge 16)
   $url = if ($grande) { $MODELO_8B } else { $MODELO_3B }
   $nome = if ($grande) { 'Meta Llama 3 8B Instruct (cerca de 5 GB) - recomendado para o seu computador' } else { 'Llama 3.2 3B Instruct (cerca de 2 GB) - mais leve, adequado ao seu computador' }
   Write-Host "  Modelo sugerido: $nome"
+  Write-Host '  (Modelos que voce ja tenha no LM Studio continuam la; este e o testado com o Anonimizador.)'
   $resp = Read-Host '  Baixar agora? Pode levar varios minutos. (S/N)'
   if ($resp -notmatch '^[sSyY]') { Aviso 'Download nao feito. Rode este configurador de novo quando quiser.'; return }
-  & $lms get $url -y
-  if ($LASTEXITCODE -ne 0) { Erro 'O download nao terminou. Verifique a internet e rode de novo.'; return }
+  # o servico de busca do LM Studio as vezes recusa por excesso de pedidos (erro 429): tenta de novo com pausa
+  $baixou = $false
+  foreach ($tentativa in 1..3) {
+    & $lms get $url -y
+    if ($LASTEXITCODE -eq 0) { $baixou = $true; break }
+    if ($tentativa -lt 3) { Aviso "O download falhou (tentativa $tentativa de 3). Nova tentativa em 60 segundos..."; Start-Sleep -Seconds 60 }
+  }
+  if (-not $baixou) {
+    Erro 'O download nao terminou. Verifique a internet e rode este configurador de novo mais tarde.'
+    Write-Host '  Alternativa: no LM Studio, procure "Llama 3 8B Instruct" na busca de modelos e baixe a versao Q4_K_M.'
+    return
+  }
   Ok 'Modelo baixado.'
 }
 
@@ -113,7 +121,8 @@ if (Test-Path $cfgServidor) {
     else { $cfg | Add-Member -NotePropertyName $campo -NotePropertyValue $valor; $mudou = $true }
   }
   if ($mudou) {
-    [System.IO.File]::WriteAllText($cfgServidor, ($cfg | ConvertTo-Json), (New-Object System.Text.UTF8Encoding($false)))
+    Copy-Item -LiteralPath $cfgServidor -Destination ($cfgServidor + '.antes-do-configurador') -Force
+    [System.IO.File]::WriteAllText($cfgServidor, ($cfg | ConvertTo-Json -Depth 20), (New-Object System.Text.UTF8Encoding($false)))
     & $lms server stop 2>&1 | Out-Null
     & $lms server start --port 1234 --bind 127.0.0.1 --cors 2>&1 | Out-Null
   }
@@ -125,7 +134,10 @@ if (Test-Path $cfgServidor) {
 # ---------- 6. Teste ----------
 Titulo '6. Teste'
 try {
-  $modelo = ((Invoke-RestMethod 'http://127.0.0.1:1234/v1/models' -TimeoutSec 15).data | Where-Object { $_.id -notmatch 'embed' } | Select-Object -First 1).id
+  $ids = @((Invoke-RestMethod 'http://127.0.0.1:1234/v1/models' -TimeoutSec 15).data | Where-Object { $_.id -notmatch 'embed' } | ForEach-Object { $_.id })
+  # prefere o modelo testado (o mesmo criterio do Anonimizador)
+  $modelo = ($ids | Where-Object { $_ -match '(?i)llama-3' } | Select-Object -First 1)
+  if (-not $modelo) { $modelo = $ids | Select-Object -First 1 }
   Write-Host "  Testando com $modelo (na primeira vez o LM Studio leva de 20 a 60 segundos para carregar)..."
   $corpo = @{ model = $modelo; messages = @(@{ role = 'user'; content = 'Responda apenas: OK' }); max_tokens = 5; temperature = 0 } | ConvertTo-Json -Depth 4
   $t0 = Get-Date

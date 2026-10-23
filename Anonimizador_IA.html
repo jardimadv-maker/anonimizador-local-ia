@@ -149,7 +149,7 @@ details summary { cursor: pointer; }
   <section class="aba" id="aba-config">
     <div class="card">
       <h2>IA local (LM Studio)</h2>
-      <p class="nota">O sistema conversa com o LM Studio deste computador. Nada vai para a internet. No LM Studio, o servidor local precisa estar ligado e com CORS ativado.</p>
+      <p class="nota">O sistema conversa com o LM Studio deste computador. Nada vai para a internet: por segurança, só são aceitos endereços do próprio computador (127.0.0.1 ou localhost). No LM Studio, o servidor local precisa estar ligado e com CORS ativado.</p>
       <div class="grade">
         <div class="campo"><label for="cfgUrl">Endereço do servidor</label><input type="text" id="cfgUrl"></div>
         <div class="campo"><label for="cfgModelo">Modelo</label><select id="cfgModelo"></select></div>
@@ -686,7 +686,16 @@ const $$ = s => [...document.querySelectorAll(s)];
 const CFG_PADRAO = { url: 'http://127.0.0.1:1234', modelo: '', trecho: 3500 };
 let cfgIA = (() => { try { return Object.assign({}, CFG_PADRAO, JSON.parse(localStorage.getItem('anonimizadorIA.cfg') || '{}')); } catch (e) { return { ...CFG_PADRAO }; } })();
 function salvarCfgIA() { try { localStorage.setItem('anonimizadorIA.cfg', JSON.stringify(cfgIA)); } catch (e) {} }
-const urlIA = () => String(cfgIA.url || CFG_PADRAO.url).replace(/\/+$/, '');
+// Seguranca: a IA so pode estar NESTE computador. Um endereco externo mandaria trechos dos documentos
+// para fora; por isso qualquer outro endereco e recusado e o padrao local e usado no lugar.
+function enderecoLocal(u) {
+  try { const x = new URL(u); return /^https?:$/.test(x.protocol) && ['127.0.0.1', 'localhost', '[::1]', '::1'].includes(x.hostname); }
+  catch (e) { return false; }
+}
+const urlIA = () => {
+  const u = String(cfgIA.url || CFG_PADRAO.url).replace(/\/+$/, '');
+  return enderecoLocal(u) ? u : CFG_PADRAO.url;
+};
 let iaOnline = false;
 
 async function iaListarModelos() {
@@ -700,7 +709,8 @@ async function iaVerificar() {
   try {
     const modelos = await iaListarModelos();
     if (!modelos.length) throw new Error('nenhum modelo de linguagem no LM Studio');
-    if (!modelos.includes(cfgIA.modelo)) { cfgIA.modelo = modelos[0]; salvarCfgIA(); }
+    // sem escolha salva, prefere o modelo testado (Llama 3) a qualquer outro que o LM Studio tenha
+    if (!modelos.includes(cfgIA.modelo)) { cfgIA.modelo = modelos.find(m => /llama-3/i.test(m)) || modelos[0]; salvarCfgIA(); }
     iaOnline = true;
     pil.className = 'pilula ok'; pil.textContent = 'IA local: conectada (' + cfgIA.modelo + ')'; pil.title = '';
     const sel = $('#cfgModelo');
@@ -1045,7 +1055,13 @@ $('#chaveSessao').onchange = () => { chaveArquivo = null; $('#arqChave').value =
 $('#cfgUrl').value = cfgIA.url;
 $('#cfgTrecho').value = cfgIA.trecho;
 $('#btnSalvarCfg').onclick = async () => {
-  cfgIA.url = $('#cfgUrl').value.trim() || CFG_PADRAO.url;
+  const novoUrl = $('#cfgUrl').value.trim() || CFG_PADRAO.url;
+  if (!enderecoLocal(novoUrl)) {
+    alert('Por segurança, o Anonimizador só conversa com a IA deste computador: use um endereço com 127.0.0.1 ou localhost (por exemplo, http://127.0.0.1:1234).');
+    $('#cfgUrl').value = cfgIA.url;
+    return;
+  }
+  cfgIA.url = novoUrl;
   cfgIA.trecho = Math.min(12000, Math.max(1000, parseInt($('#cfgTrecho').value, 10) || 3500));
   if ($('#cfgModelo').value) cfgIA.modelo = $('#cfgModelo').value;
   salvarCfgIA();
