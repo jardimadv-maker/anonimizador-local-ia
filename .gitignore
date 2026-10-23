@@ -1,0 +1,28 @@
+# Protecao contra envio acidental de dados de clientes.
+# Este repositorio so deve conter o codigo e a documentacao.
+
+# Documentos de entrada
+*.pdf
+*.doc
+*.docx
+*.odt
+*.rtf
+*.txt
+# ...menos os textos das licencas de terceiros
+!licencas/*.txt
+
+# Chaves de reidentificacao (contem os dados verdadeiros)
+chave_*.json
+*.chave.json
+
+# Resultados gerados pelo Anonimizador
+*_anonimizado.md
+*_anonimizado.txt
+pacote_*.md
+documentos_*.md
+texto_reidentificado_*.md
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store
